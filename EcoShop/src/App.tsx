@@ -1,9 +1,23 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import { HashRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
-    <div>
-      <h1>EcoShop App</h1>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
-export default App;
+function WrappedApp() {
+  return (
+    <HashRouter>
+      <App />
+    </HashRouter>
+  );
+}
+
+export default WrappedApp;

@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+/* eslint-disable import/prefer-default-export */
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,26 +14,26 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
       default:
-        'https://i.pinimg.com/474x/f1/da/a7/f1daa70c9e3343cebd66ac2342d5be3f.jpg',
+        "https://i.pinimg.com/474x/f1/da/a7/f1daa70c9e3343cebd66ac2342d5be3f.jpg",
     },
     shopping_lists: [
       [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product',
+          ref: "Product",
         },
       ],
     ],
     favorites: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: "Product",
       },
     ],
   },
-  { collection: 'user' }
+  { collection: "user" }
 );
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 export { User };
