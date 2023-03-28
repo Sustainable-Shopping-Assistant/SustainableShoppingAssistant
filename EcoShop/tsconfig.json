@@ -17,7 +17,8 @@
     "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
-      "*": ["*", "node_modules/*"]
+      "*": ["*", "node_modules/*"],
+      "react-router-dom": ["../node_modules/react-router-dom"]
     },
     "outDir": "dist",
     "sourceMap": true

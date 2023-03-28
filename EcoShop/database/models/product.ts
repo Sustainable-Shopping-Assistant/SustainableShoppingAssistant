@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+/* eslint-disable import/prefer-default-export */
+import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
@@ -10,9 +11,9 @@ const productSchema = new mongoose.Schema(
     sustainability_score: Number,
     retailer_link: String,
   },
-  { collection: 'product' }
+  { collection: "product" }
 );
 
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 export { Product };
