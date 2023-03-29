@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Signup: React.FC = () => {
-  const [name, setName] = useState('');
+  const [first_name, setFirstName] = useState('');
+  const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Signup: React.FC = () => {
     e.preventDefault();
 
     try {
-      await axios.post('/api/auth/signup', { name, email, password });
+      await axios.post('http://localhost:8080/signup', { first_name, last_name, email, password });
       navigate('/login');
     } catch (err) {
       console.error(err);
@@ -23,9 +24,15 @@ const Signup: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        placeholder="First Name"
+        value={first_name}
+        onChange={(e) => setFirstName(e.target.value)}
+      />
+       <input
+        type="text"
+        placeholder="Last Name"
+        value={last_name}
+        onChange={(e) => setLastName(e.target.value)}
       />
       <input
         type="email"
