@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-console */
 import dotenv from "dotenv";
 import path from "path";
 import express, { Request, Response, NextFunction } from "express";
@@ -7,10 +5,9 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import session from "express-session";
-import { connect } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "./models/User";
+import { User } from "../database/models/user";
 
 // Import the db connection
 import db from "../database/index";
@@ -22,7 +19,7 @@ app.use(express.static(path.join(__dirname, "../client/dist")));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use(
   session({
@@ -54,12 +51,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // ----  Routes ---- //
 // Signup route
 app.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body;
-
+  const { first_name, last_name, email, password } = req.body;
+  console.log(req.body);
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const newUser = new User({
-    username,
+    first_name,
+    last_name,
     email,
     password: hashedPassword,
   });
@@ -78,11 +76,11 @@ app.post("/login", async (req, res) => {
 
   const user = await User.findOne({ email });
 
-  if (!user) {
+  if (!user || !password || !user.password) {
     return res.status(400).send("Invalid email or password");
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = bcrypt.compare(password, user.password);
 
   if (!isMatch) {
     return res.status(400).send("Invalid email or password");
@@ -94,6 +92,7 @@ app.post("/login", async (req, res) => {
 
   res.status(200).json({ token, userId: user._id, expiresIn: "1d" });
 });
+
 
 // Logout route
 app.post("/logout", (req, res) => {
@@ -108,7 +107,15 @@ app.post("/logout", (req, res) => {
 });
 
 // Middleware for protected routes
-const isAuthenticated = (req, res, next) => {
+declare global {
+  namespace Express {
+    interface Request {
+      user?: string | jwt.JwtPayload;
+    }
+  }
+}
+
+const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("x-auth-token");
 
   if (!token) {
@@ -125,7 +132,8 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // Example protected route
-app.get("/protected", isAuthenticated, (req, res) => {
+app.get("/protected", isAuthenticated, (req: Request, res: Response) => {
+  const decodedUser = req.user as string | jwt.JwtPayload;
   res.status(200).send("Access granted.");
 });
 
