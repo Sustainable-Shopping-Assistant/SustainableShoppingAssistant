@@ -65,7 +65,6 @@ const Login: React.FC = () => {
 
   // Check if user is already authenticated or loading before rendering the form
   // if (loading || authenticated) {
-  //   console.log("???nonono")
   //   return null;
   // }
 

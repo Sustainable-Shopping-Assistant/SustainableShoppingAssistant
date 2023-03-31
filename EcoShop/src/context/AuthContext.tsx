@@ -4,7 +4,8 @@ import axios from "axios";
 const url = "http://localhost:8080";
 
 interface IUser {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
 }
 
@@ -14,6 +15,7 @@ interface IAuthContext {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  currentUser: IUser | null;
   children: React.ReactNode;
 }
 
@@ -22,8 +24,9 @@ const AuthContext = createContext<IAuthContext>({
   authenticated: false,
   loading: true,
   login: () => Promise.resolve(),
-  logout: () => {},
-  children: null
+  logout: () => { },
+  children: null,
+  currentUser: null
 });
 
 const AuthProvider = ({ children }: IAuthContext) => {
@@ -83,7 +86,7 @@ const AuthProvider = ({ children }: IAuthContext) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, authenticated, loading, login, logout, children }}
+      value={{ user, authenticated, loading, login, logout, currentUser: user, children }}
     >
       {children}
     </AuthContext.Provider>
