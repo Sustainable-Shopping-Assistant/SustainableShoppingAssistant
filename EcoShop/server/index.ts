@@ -52,7 +52,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Signup route
 app.post("/signup", async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
-  console.log(req.body);
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const newUser = new User({
@@ -89,7 +88,6 @@ app.post("/login", async (req, res) => {
   const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
     expiresIn: "1d",
   });
-
   res.status(200).json({ token, userId: user._id, expiresIn: "1d" });
 });
 
@@ -116,17 +114,18 @@ declare global {
 }
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header("x-auth-token");
-
+  const token = req.header("Authorization")?.slice(7);
   if (!token) {
     return res.status(401).send("Access denied. No token provided.");
   }
 
   try {
     const decoded = jwt.verify(token, "your_jwt_secret");
+
     req.user = decoded;
     next();
   } catch (error) {
+    console.log("i am here")
     res.status(400).send("Invalid token.");
   }
 };
@@ -137,8 +136,27 @@ app.get("/protected", isAuthenticated, (req: Request, res: Response) => {
   res.status(200).send("Access granted.");
 });
 
-// ---- Catch all for routing ---- //
+//Me route
+app.get("/me", isAuthenticated, (req: Request, res: Response) => {
+  const decodedUser = req.user as string | jwt.JwtPayload;
+  let userId;
+  if (typeof decodedUser !== "string") {
+    userId = decodedUser.id;
+  }
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send("User not found.");
+      }
+      res.status(200).json({ user });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Server error.");
+    });
+});
 
+// ---- Catch all for routing ---- //
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(
     path.join(__dirname, "../client/dist/index.html"),
@@ -151,7 +169,6 @@ app.get("*", (req: Request, res: Response) => {
 });
 
 // ---- Set Port and Listen For Requests ---- //
-
 const port = 8080;
 
 app.listen(port, () => {
