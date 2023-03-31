@@ -1,0 +1,13 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-nav {
+  display: flex;
+  align-items: center;
+}
+.user-nav span {
+  margin-right: 1rem;
+}
