@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+const url = "http://localhost:8080";
 
 interface IUser {
   name: string;
@@ -13,7 +14,7 @@ interface IAuthContext {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 const AuthContext = createContext<IAuthContext>({
@@ -40,7 +41,7 @@ const AuthProvider = ({ children }: IAuthContext) => {
 
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/auth/me", {
+        const res = await axios.get(`${url}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const { user } = res.data;
@@ -49,7 +50,6 @@ const AuthProvider = ({ children }: IAuthContext) => {
         setAuthenticated(true);
         setLoading(false);
       } catch (err) {
-        console.error(err);
         setLoading(false);
       }
     };
@@ -59,17 +59,15 @@ const AuthProvider = ({ children }: IAuthContext) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
+      const res = await axios.post(`${url}/login`, { email, password });
       const { token } = res.data;
 
       // Store the JWT in a cookie with a 1-day expiry
       Cookies.set("jwt", token, { expires: 1 });
-
-      const userRes = await axios.get("/api/auth/me", {
+      const userRes = await axios.get(`${url}/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { user } = userRes.data;
-
       setUser(user);
       setAuthenticated(true);
     } catch (err) {
