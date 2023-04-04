@@ -5,18 +5,39 @@ import "../Home.css";
 
 const Home: React.FC = () => {
   const { user, logout } = useContext(AuthContext);
+
   return (
     <>
       <header>
-        <nav>
-          <Link to="/">Home</Link>
+        <nav className="navbar">
+          <Link to="/" className="navbar-brand">
+            Home
+          </Link>
           {user ? (
-            <div className="user-nav">
-              <span>{user.first_name}</span>
-              <button onClick={logout}>Logout</button>
+            <div className="dropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {user.first_name}
+              </button>
+              <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <Link to="/shoppinglist" className="dropdown-item">
+                  Shopping List
+                </Link>
+                <button className="dropdown-item" onClick={logout}>
+                  Logout
+                </button>
+              </div>
             </div>
           ) : (
-            <Link to="/login">Login</Link>
+            <Link to="/login" className="nav-link">
+              Login
+            </Link>
           )}
         </nav>
       </header>
