@@ -14,12 +14,13 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import ShoppingList from "./pages/ShoppingList";
 import Me from "./pages/Me";
 import Protected from "./pages/Protected";
 
 const App: React.FC = () => {
   return (
-    <AuthProvider user={null} authenticated={false} loading={false} login={function (_email: string, _password: string): Promise<void> {
+    <AuthProvider user={null} currentUser={null} authenticated={false} loading={false} login={function (_email: string, _password: string): Promise<void> {
       throw new Error("Function not implemented.");
     } } logout={function (): void {
       throw new Error("Function not implemented.");
@@ -34,6 +35,10 @@ const App: React.FC = () => {
             <Route
               path="/protected"
               element={<PrivateRoute element={<Protected />} />}
+            />
+             <Route
+              path="/shoppinglist"
+              element={<PrivateRoute element={<ShoppingList />} />}
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
